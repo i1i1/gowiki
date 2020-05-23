@@ -1,0 +1,36 @@
+#!/bin/sh
+lstags() {
+    grep -h "^\[tags\]: <> " "$@" | \
+        sed -e 's/^\[tags\]: <> (//' -e 's/)$//' | \
+        sort | \
+        uniq
+}
+lstag()  {
+    tag="$1"
+    shift 1
+    grep -l "^\[tags\]: <> ($tag)" "$@"
+}
+printfiles() {
+    awk '
+/^# / && !(FILENAME in articles) {
+    articles[FILENAME] = 1
+    fname = FILENAME
+    sub("^md/", "", fname)
+    sub(".md$", "", fname)
+    sub("^# ", "", $0)
+    printf("* [%s](%s)\n", $0, fname)
+}' "$@" | sort
+}
+
+
+echo "# Index page"
+echo "## List of all tags"
+
+lstags "$@" | while read tag; do
+    echo "### $tag"
+    printfiles $(lstag "$tag" "$@")
+done
+
+echo ""
+echo "## List of all pages"
+printfiles "$@"
