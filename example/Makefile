@@ -1,4 +1,4 @@
-GOWIKI=../gowiki
+GOWIKI=gowiki
 MD_PAGES=$(shell find md -name '*.md' -type f)
 HTML_PAGES=$(subst md, html, $(MD_PAGES:.md=.html)) html/index.html
 
